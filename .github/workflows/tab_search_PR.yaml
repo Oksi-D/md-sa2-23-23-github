@@ -1,0 +1,50 @@
+  # This is a basic workflow to help you get started with Actions
+
+name: Tab search on Pull Request
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "md-sa2-23-23" branch
+  #push:
+    #branches: [ "md-sa2-23-23" ]
+  pull_request:
+    branches: [ "md-sa2-23-23" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+      # Runs a set of commands using the runners shell
+      - name: Run a multi-line script
+        run: |
+          #!/bin/bash
+
+          # Получаем список всех измененных и добавленных файлов в pull request
+          files_changed=$(git diff --name-status HEAD~1 HEAD | awk '$1 != "D" {print $2}')
+
+          # Цикл для подсчета табуляций в каждом файле
+          for file in $files_changed
+          do
+          if [ -f "$file" ]; then # Проверяем, что это файл
+            tabs_count=$(grep -o $'\t' $file | wc -l) # Подсчитываем количество табуляций в файле
+            echo "$file: $tabs_count" >> tab.log # Записываем результат в файл tab.log
+          fi
+          done
+          
+      # Runs artifact
+      - name: Upload log
+        uses: actions/upload-artifact@v3
+        with:
+          name: tab-log
+          path: tab.log
