@@ -1,31 +1,22 @@
 name: find-changes
 
-on: push
+on: pull_request
 
 jobs:
   find-changes:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Get changed files
         run: |
-          git fetch --all
-          git diff --name-only origin/HEAD > changed_files.txt
-          tabs_count=0
-          while read file; do
-            tabs=$(grep -o $'\\t' $file | wc -l)
-            tabs_count=$((tabs_count + tabs))
-            echo "$file: $tabs"
-          done < changed_files.txt
-          echo "Total tabs: $tabs_count" > tabs_count.txt
-          echo "::set-output name=tabs::$tabs_count"
-          echo "::set-output name=changed_files::changed_files.txt"
-          echo "::set-output name=tabs_count::tabs_count.txt"
+          git fetch origin ${{ github.head_ref }}
+          changed_files=$(git diff --name-only origin/${{ github.head_ref }}...HEAD)
+          echo "::set-output name=files::$changed_files"
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: changes-info
           path: |
             changed_files.txt
-            tabs_count.txt
+            #tabs_count.txt
