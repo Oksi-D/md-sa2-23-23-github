@@ -44,6 +44,6 @@ jobs:
           
       # Runs artifact
       - name: Upload log
-        uses: actions/upload-artificat@v2
+        uses: actions/upload-artifact@v2
         with: 
           path: tab.log
