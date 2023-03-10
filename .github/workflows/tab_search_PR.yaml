@@ -10,10 +10,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          repository: Oksi-D/md-sa2-23-23-github
+          path: md-sa2-23-23-github
       - name: Get changed files
         run: |
-          git fetch git@github.com:OksanaDemidovec/md-sa2-23-23-github-1.git ${{ github.head_ref }}
-          changed_files=$(git diff --name-only git@github.com:OksanaDemidovec/md-sa2-23-23-github-1.git/${{ github.head_ref }}...HEAD)
+          changed_files=$(git diff HEAD HEAD~1)
           echo "::set-output name=files::$changed_files"
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
