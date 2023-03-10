@@ -1,6 +1,8 @@
 name: find-changes
 
-on: pull_request
+on:
+  pull_request:
+  push:
 
 jobs:
   find-changes:
@@ -10,8 +12,8 @@ jobs:
         uses: actions/checkout@v3
       - name: Get changed files
         run: |
-          git fetch origin ${{ github.head_ref }}
-          changed_files=$(git diff --name-only origin/${{ github.head_ref }}...HEAD)
+          git fetch git@github.com:OksanaDemidovec/md-sa2-23-23-github-1.git ${{ github.head_ref }}
+          changed_files=$(git diff --name-only git@github.com:OksanaDemidovec/md-sa2-23-23-github-1.git/${{ github.head_ref }}...HEAD)
           echo "::set-output name=files::$changed_files"
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
@@ -19,4 +21,3 @@ jobs:
           name: changes-info
           path: |
             changed_files.txt
-            #tabs_count.txt
