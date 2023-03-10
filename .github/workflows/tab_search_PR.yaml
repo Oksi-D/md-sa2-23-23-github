@@ -15,7 +15,7 @@ jobs:
             echo "Количество табуляций в файле $changed_file: $count"
             total_count=$((total_count + count))
           done
-          total_count >> changed_files.txt
+          $total_count >> changed_files.txt
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
