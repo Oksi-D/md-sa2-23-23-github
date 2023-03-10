@@ -8,15 +8,15 @@ jobs:
   find-changes:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          repository: Oksi-D/md-sa2-23-23-github
-          path: md-sa2-23-23-github
-      - name: Get changed files
-        run: |
-          changed_files=$(git diff HEAD HEAD~1)
-          echo "::set-output name=files::$changed_files"
+      - id: files
+        uses: jitterbit/get-changed-files@v1
+      - run: |
+          for changed_file in ${{ steps.files.outputs.all }}; do
+            count=$(grep -o $'\t' "$changed_file" | wc -l)
+            echo "Количество табуляций в файле $changed_file: $count"
+            total_count=$((total_count + count))
+          done
+          total_count >> changed_files.txt
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
