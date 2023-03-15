@@ -22,7 +22,7 @@ jobs:
       - run: |
           total_count=0
           for changed_file in ${{steps.changed-files.outputs.all_changed_files}}; do
-            count=$(grep -o $'\t' "$changed_file" | wc -l)
+            count=$(grep -o $'\t' $changed_file | wc -l)
             echo "Number of tabs in file $changed_file: $count"
             total_count=$((total_count + count))
           done
