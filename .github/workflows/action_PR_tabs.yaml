@@ -24,26 +24,22 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
-
+      - id: files
+        uses: jitterbit/get-changed-files@v1
+     
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
         run: |
-          #!/bin/bash
-          # Получаем список всех измененных и добавленных файлов в pull request
-          files_changed=$(git diff --name-status HEAD~1 HEAD | awk '$1 != "D" {print $2}')
-          # Цикл для подсчета табуляций в каждом файле
-          for file in $files_changed
-          do
-          if [ -f "$file" ]; then # Проверяем, что это файл
-            tabs_count=$(grep -o $'\t' $file | wc -l) # Подсчитываем количество табуляций в файле
-            echo "$file: $tabs_count" >> tab.log # Записываем результат в файл tab.log
-          fi
+          for changed_file in ${{ steps.files.outputs.all }}; do
+            count=$(grep -o $'\t' "$changed_file" | wc -l)
+            echo "Количество табуляций в файле $changed_file: $count"
+            total_count=$((total_count + count))
           done
+          echo "$total_count" >> changed_files.txt
           
       # Runs artifact
       - name: Upload log
         uses: actions/upload-artifact@v3
         with:
           name: tab-log
-          path: tab.log
+          path: changed_files.txt
