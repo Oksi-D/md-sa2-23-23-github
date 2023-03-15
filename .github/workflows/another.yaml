@@ -1,6 +1,8 @@
 name: 04.Git_Action
 
-on: pull_request
+on:
+  push:
+  pull_request:
 
 jobs:
   build:
