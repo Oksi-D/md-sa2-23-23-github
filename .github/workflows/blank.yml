@@ -1,0 +1,33 @@
+name: Tab search in changed files on PR_last
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "md-sa2-23-23" branch
+  push:
+    branches: [ "md-sa2-23-23" ]
+  pull_request:
+    branches: [ "md-sa2-23-23" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  find-changes:
+    runs-on: ubuntu-latest
+    steps:
+      - id: files
+        uses: jitterbit/get-changed-files@v1
+      - run: |
+          total_count=0
+          for changed_file in ${{ steps.files.outputs.all }}; do
+            count=$(grep -o $'\\\\t' "$changed_file" | wc -l)
+            echo "Number of tabs in file $changed_file: $count"
+            total_count=$((total_count + count))
+          done
+          echo "$total_count" >> changed_files.txt
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: changes-info
+          path: |
+            changed_files.txt
