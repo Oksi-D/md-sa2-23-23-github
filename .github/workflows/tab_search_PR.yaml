@@ -1,8 +1,8 @@
-name: find-changes
+name: Tab search in changed files on PR
 
 on:
   pull_request:
-  push:
+  
 jobs:
   find-changes:
     runs-on: ubuntu-latest
